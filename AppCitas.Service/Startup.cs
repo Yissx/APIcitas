@@ -1,3 +1,4 @@
+using AppCitas.Service.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.OpenApi.Models;
 
@@ -7,10 +8,9 @@ namespace API
     {
         private readonly IConfiguration _config;
 
-        public Startup(IConfiguration configuration)
+        public Startup(IConfiguration config)
         {
-            Configuration = configuration;
-            //_config = config;
+            _config = config;
         }
 
         public IConfiguration Configuration { get; }
@@ -18,9 +18,9 @@ namespace API
         // This method gets called by the runtime. Use this method to add services to the container.
         public void ConfigureServices(IServiceCollection services)
         {
-            services.AddDbContext<DbContext>(options =>
+            services.AddDbContext<DataContext>(options =>
             {
-                options.UseSqlite("Connection string");
+                options.UseSqlite(_config.GetConnectionString("DefaultConnection"));
             });
 
             services.AddControllers();
