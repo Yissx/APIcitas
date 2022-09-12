@@ -1,4 +1,5 @@
-﻿using AppCitas.Service.Data; //Takes the DataContext
+﻿using AppCitas.Service.Controllers;
+using AppCitas.Service.Data; //Takes the DataContext
 using AppCitas.Service.Entities; //Gets the AppUsers
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -7,9 +8,7 @@ using SQLitePCL;
 
 namespace AppCitas.Service.Controllers
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class UsersController : ControllerBase
+    public class UsersController : BaseApiController
     {
         private readonly DataContext _context;
 
