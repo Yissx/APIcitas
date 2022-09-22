@@ -1,4 +1,5 @@
 using AppCitas.Service.Data;
+using AppCitas.Service.ExcpetionMiddleware;
 using AppCitas.Service.Extensions;
 using AppCitas.Service.Interfaces;
 using AppCitas.Service.Services;
@@ -40,6 +41,8 @@ namespace API
                 app.UseSwagger();
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "WebAPIv5 v1"));
             }
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseHttpsRedirection();
 

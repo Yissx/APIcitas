@@ -5,21 +5,24 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using SQLitePCL;
 
-namespace AppCitas.Service.Controllers
+namespace AppCitas.Service.Controllers;
+
+[Route("api/[controller]")]
+[ApiController]
+
+public class BuggyController : BaseApiController
 {
-    [Route("api/[controller]")]
-    [ApiController]
-    public class BuggyController : BaseApiController
+    private readonly DataContext _context;
+
+    public BuggyController(DataContext context)
     {
-        private readonly DataContext _context;
-        public BuggyController(DataContext context)
-        {
-            _context = context;
-        }
+        _context = context;
     }
+
+
     [HttpGet("auth")]
     [Authorize]
-    public ActionResult<string>GetSecret()
+    public ActionResult<string> GetSecret()
     {
         return "secret text";
     }
@@ -27,7 +30,7 @@ namespace AppCitas.Service.Controllers
     [HttpGet("not-found")]
     public ActionResult<AppUser> GetNotFound()
     {
-        var thing = sqlite3_context.Users.Find(-1);
+        var thing = _context.Users.Find(-1);
         if (thing == null) return NotFound();
         return Ok(thing);
     }
@@ -35,7 +38,7 @@ namespace AppCitas.Service.Controllers
     [HttpGet("server-error")]
     public ActionResult<string> GetServerError()
     {
-        var thing = sqlite3_context.Users.Find(-1);
+        var thing = _context.Users.Find(-1);
         var thingToReturn = thing.ToString();
         return thingToReturn;
     }
