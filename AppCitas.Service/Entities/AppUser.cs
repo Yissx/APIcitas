@@ -1,10 +1,27 @@
-﻿namespace AppCitas.Service.Entities
+﻿using AppCitas.Service.Extensions;
+
+namespace AppCitas.Service.Entities;
+
+public class AppUser
 {
-    public class AppUser
+    public int Id { get; set; }
+    public string UserName { get; set; }
+    public byte[] PasswordHash { get; set; }
+    public byte[] PasswordSalt { get; set; }  
+    public DateTime DateOfBirth { get; set; }
+    public string KnownnAs { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime LasActive { get; set; } = DateTime.Now;
+    public string Gender { get; set; }
+    public string Introduction { get; set; }
+    public string LookingFor   { get; set; }
+    public string Interests { get; set; }
+    public string City { get; set; }
+    public string Country { get; set; }
+    public ICollection<Photo> Photos { get; set; }
+
+    /*public int GetAge()
     {
-        public int Id { get; set; }
-        public string UserName { get; set; }
-        public byte[] PasswordHash { get; set; }
-        public byte[] PasswordSalt { get; set; }  
-    }
+        return DateOfBirth.CalculateAge();
+    }*/
 }

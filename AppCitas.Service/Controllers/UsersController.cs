@@ -1,33 +1,78 @@
-﻿using AppCitas.Service.Controllers;
-using AppCitas.Service.Data; //Takes the DataContext
+﻿using AppCitas.Service.Data; //Takes the DataContext
+using AppCitas.Service.DTOs;
 using AppCitas.Service.Entities; //Gets the AppUsers
+using AppCitas.Service.Extensions;
+using AppCitas.Service.Interfaces;
+using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
-using SQLitePCL;
 
-namespace AppCitas.Service.Controllers
+namespace AppCitas.Service.Controllers;
+
+[Authorize]
+public class UsersController : BaseApiController
 {
-    public class UsersController : BaseApiController
-    {
-        private readonly DataContext _context;
+    private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
+    private readonly IPhotoService _photoService;
 
-        public UsersController(DataContext context)
+    //Patrón de diseño == no dificultad en los queries
+    public UsersController(IUserRepository userRepository, IMapper mapper, IPhotoService photoService)
+    {
+        _userRepository = userRepository;
+        _mapper = mapper;
+        _photoService = photoService;
+    }
+
+    [HttpGet]   //GET api/users/{id}
+    public async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() //IEnumerable es un listado sin capacidades. AppUser into IEnumerable.
+    {
+        //async hace que el método sea asíncrono
+        var users = await _userRepository.GetMembersAsync();
+        return Ok(users);
+    }
+
+    [HttpGet("{username}")]
+    public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
+    {
+        return await _userRepository.GetMemberAsync(username);
+    }
+
+    [HttpPut]
+    public async Task<ActionResult> UpdateUser(MemberUpdateDto memberUpdateDto)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        _mapper.Map(memberUpdateDto, user);
+        _userRepository.Update(user);
+
+        if (await _userRepository.SaveAllAsync()) return NoContent();
+
+        return BadRequest("Failed to update the user");
+    }
+
+    [HttpPost("add-photo")]
+    public async Task<ActionResult<PhotoDto>> AddPhoto(IFormFile file)
+    {
+        var user = await _userRepository.GetUserByUsernameAsync(User.GetUsername());
+        var result = await _photoService.AddPhotoAsync(file);
+
+        if (result.Error != null) return BadRequest(result.Error.Message);
+        var photo = new Photo
         {
-            _context = context;
-        }
-        [HttpGet]   //GET api/users/{id}
-        [AllowAnonymous] //tiene permiso
-        public  async Task<ActionResult<IEnumerable<AppUser>>> GetUsers() //IEnumerable es un listado sin capacidades. AppUser into IEnumerable.
-        { //async hace que el método sea asíncrono
-            return await _context.Users.ToListAsync();
-        }
-        [HttpGet("{id}")] //GET api/users/id
-        [Authorize] //necesita autorización
-        public ActionResult<AppUser> GetUserById([FromRoute] int id)
+            Url = result.SecureUrl.AbsoluteUri,
+            PublicId = result.PublicId,
+        };
+        if(user.Photos.Count == 0) photo.IsMain = true;
+        user.Photos.Add(photo);
+
+        if (await _userRepository.SaveAllAsync())
         {
-            return _context.Users.Find(id);
+             return CreatedAtRoute(
+                "GetUser",
+                new { username = user.UserName },
+                _mapper.Map<PhotoDto>(photo));
         }
+
+        return BadRequest("Problem adding photo");
     }
 }
