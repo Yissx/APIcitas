@@ -1,46 +1,51 @@
-﻿using AppCitas.Service.Data;
-using AppCitas.Service.Entities;
-using System.Security.Cryptography;
+﻿using System.Security.Cryptography;
 using System.Text;
+using AppCitas.Service.Data;
 using AppCitas.Service.DTOs;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.AspNetCore.Mvc;
-using System;
+using AppCitas.Service.Entities;
 using AppCitas.Service.Interfaces;
+using AutoMapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace AppCitas.Service.Controllers;
 
 public class AccountController : BaseApiController
 {
     private readonly DataContext _context;
-    private readonly ITokenService _tokenService;   
+    private readonly ITokenService _tokenService;
+    private readonly IMapper _mapper;
 
-    public AccountController(DataContext context, ITokenService tokenService)
+    public AccountController(DataContext context, ITokenService tokenService, IMapper mapper)
     {
         _context = context;
-        _tokenService = tokenService;   
+        _tokenService = tokenService;
+        _mapper = mapper;
     }
 
     [HttpPost("register")]
     public async Task<ActionResult<UserDto>> Register(RegisterDto registerDto)
     {
         if (await UserExists(registerDto.Username))
-            return BadRequest("Username is already taken");
+            return BadRequest("Username is already taken!");
+
+        var user = _mapper.Map<AppUser>(registerDto);
 
         using var hmac = new HMACSHA512();
-        var user = new AppUser
-        {
-            UserName = registerDto.Username.ToLower(),
-            PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password)),
-            PasswordSalt = hmac.Key
-        };
+
+        user.UserName = registerDto.Username.ToLower();
+        user.PasswordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(registerDto.Password));
+        user.PasswordSalt = hmac.Key;
+
         _context.Users.Add(user);
         await _context.SaveChangesAsync();
 
         return new UserDto
         {
             Username = user.UserName,
-            Token = _tokenService.CreateToken(user)
+            Token = _tokenService.CreateToken(user),
+            KnownAs = user.KnownAs,
+            Gender = user.Gender
         };
     }
 
@@ -53,19 +58,23 @@ public class AccountController : BaseApiController
 
         if (user == null) return Unauthorized("Invalid username or password");
 
-        using var hmac = new HMACSHA512(user.PasswordSalt); //semilla que genera valores aleatorios de acuerdo al hash
+        using var hmac = new HMACSHA512(user.PasswordSalt);
+
         var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(loginDto.Password));
 
-        for(int i=0; i<computedHash.Length; i++)
+        for (int i = 0; i < computedHash.Length; i++)
         {
             if (computedHash[i] != user.PasswordHash[i])
                 return Unauthorized("Invalid username or password");
         }
+
         return new UserDto
         {
             Username = user.UserName,
             Token = _tokenService.CreateToken(user),
-            PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url
+            PhotoUrl = user.Photos.FirstOrDefault(x => x.IsMain)?.Url,
+            KnownAs = user.KnownAs,
+            Gender = user.Gender
         };
     }
 
@@ -73,7 +82,8 @@ public class AccountController : BaseApiController
 
     private async Task<bool> UserExists(string username)
     {
-        return await _context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());    
+        return await
+            _context.Users.AnyAsync(x => x.UserName.ToLower() == username.ToLower());
     }
 
     #endregion

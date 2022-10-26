@@ -9,9 +9,9 @@ public class AppUser
     public byte[] PasswordHash { get; set; }
     public byte[] PasswordSalt { get; set; }  
     public DateTime DateOfBirth { get; set; }
-    public string KnownnAs { get; set; }
+    public string KnownAs { get; set; }
     public DateTime CreatedAt { get; set; } = DateTime.Now;
-    public DateTime LasActive { get; set; } = DateTime.Now;
+    public DateTime LastActive { get; set; } = DateTime.Now;
     public string Gender { get; set; }
     public string Introduction { get; set; }
     public string LookingFor   { get; set; }
