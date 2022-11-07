@@ -1,2 +1,2 @@
-# APIcitas
-Curso de servicios web
+# AppCitas
+Date application using .NET
