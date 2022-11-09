@@ -23,6 +23,9 @@ public class AppUser
     public ICollection<UserLike>LikedUsers { get; set; }
     public ICollection<UserLike>LikedByUsers { get; set; }
 
+    public ICollection<Messages> MessageSent { set; get; }
+    public ICollection<Messages> MessagesReceived { set; get; }
+
     /*public int GetAge()
     {
         return DateOfBirth.CalculateAge();
