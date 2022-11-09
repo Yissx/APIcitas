@@ -1,2 +1,2 @@
-# APIcitas
-Curso de servicios web
+# AppCitas
+Web services project: date application backend using .NET
