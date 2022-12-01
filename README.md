@@ -1,2 +1,2 @@
 # AppCitas
-Date application using .NET
+Web services project: date application backend using .NET
