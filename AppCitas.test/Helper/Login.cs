@@ -1,13 +1,11 @@
 ﻿using AppCitas.Service.DTOs;
+using AppCitas.test.Helper;
 using Newtonsoft.Json.Linq;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
+using Windows.UI.Xaml;
 
-namespace AppCitas.test.Helper;
+namespace AppCitas.test.Helpers;
 
 public class Login
 {
@@ -33,15 +31,14 @@ public class Login
         });
         return user;
     }
-    #region Private methods
-
+    #region Privated methods
     private static string GetLoginObject(LoginDto loginDto)
     {
         var entityObject = new JObject()
-            {
-                { nameof(loginDto.Username), loginDto.Username },
-                { nameof(loginDto.Password), loginDto.Password }
-            };
+        {
+            { nameof(loginDto.Username), loginDto.Username },
+            { nameof(loginDto.Password), loginDto.Password }
+        };
         return entityObject.ToString();
     }
     public static StringContent GetHttpContent(string objectToEncode)

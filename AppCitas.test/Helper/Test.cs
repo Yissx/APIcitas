@@ -8,8 +8,7 @@ namespace AppCitas.test.Helper;
 
 public sealed class Test
 {
-    private static readonly Lazy<Test> _lazyInstance =
-            new Lazy<Test>(() => new Test());
+    private static readonly Lazy<Test> _lazyInstance = new Lazy<Test>(() => new Test());
 
     public static Test Instance
     {

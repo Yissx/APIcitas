@@ -76,7 +76,7 @@ public class APIWebApplicationFactory<IStartup> : WebApplicationFactory<Startup>
     {
         appDbContext.Database.EnsureCreated();
         // if (!LoadTestData<AppRole>.Run(appDbContext, "RoleSeedData.json")) throw new Exception("Unable to seed roles data.");
-        if (!LoadTestData<AppUser>.Run(appDbContext, "UserSeedData.json")) throw new Exception("Unable to seed users data.");
+        if (!LoadTestData<AppUser>.Run(appDbContext, "Data/UserSeedData.json")) throw new Exception("Unable to seed users data.");
     }
 }
 
