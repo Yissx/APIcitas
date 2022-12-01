@@ -28,5 +28,4 @@ public class UnitTest1
             // Assert
             Assert.Equal(resp, y);
         }
-    }
 }
