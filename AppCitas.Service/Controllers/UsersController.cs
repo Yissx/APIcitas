@@ -1,6 +1,4 @@
-﻿using System.Security.Claims;
-using AppCitas.Service.Data;
-using AppCitas.Service.DTOs;
+﻿using AppCitas.Service.DTOs;
 using AppCitas.Service.Entities;
 using AppCitas.Service.Extensions;
 using AppCitas.Service.Helpers;
@@ -8,7 +6,6 @@ using AppCitas.Service.Interfaces;
 using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace AppCitas.Service.Controllers;
 
@@ -25,7 +22,7 @@ public class UsersController : BaseApiController
         _mapper = mapper;
         _photoService = photoService;
     }
-
+    [AllowAnonymous]
     [HttpGet]
     public async Task<ActionResult<IEnumerable<MemberDto>>> GetUsers([FromQuery] UserParams userParams)
     {
@@ -45,7 +42,7 @@ public class UsersController : BaseApiController
 
         return Ok(users);
     }
-
+    [AllowAnonymous]
     [HttpGet("{username}", Name = "GetUser")]
     public async Task<ActionResult<MemberDto>> GetUserByUsername(string username)
     {

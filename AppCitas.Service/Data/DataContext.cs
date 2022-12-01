@@ -6,9 +6,9 @@ namespace AppCitas.Service.Data;
 public class DataContext: DbContext
 {
 	public DataContext(DbContextOptions options) : base(options)
-	{
-			
+	{	
 	}
+
 	public DbSet<AppUser> Users { get; set; }
 	public DbSet<UserLike> Likes { get; set; }
 	public DbSet<Messages> Messages { get; set; }
@@ -34,9 +34,14 @@ public class DataContext: DbContext
             .OnDelete(DeleteBehavior.Cascade);
 
 		builder.Entity<Messages>()
-			.HasOne(u => u.Sender)
+			.HasOne(u => u.Recipient)
 			.WithMany(m => m.MessagesReceived)
 			.OnDelete(DeleteBehavior.Restrict);
-    }
 
+		builder.Entity<Messages>()
+			.HasOne(u => u.Sender)
+			.WithMany(m => m.MessagesSent)
+			.OnDelete(DeleteBehavior.Restrict);
+
+    }
 }

@@ -21,11 +21,10 @@ public class AutoMapperProfiles : Profile
         CreateMap<RegisterDto, AppUser>();
         CreateMap<Messages, MessagesDto>()
             .ForMember(
-            dest => dest.SenderPhotoUrl,
-            opt => opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url));
-        CreateMap<Messages, MessagesDto>()
+                dest => dest.SenderPhotoUrl,
+                opt => opt.MapFrom(src => src.Sender.Photos.FirstOrDefault(x => x.IsMain).Url))
             .ForMember(
-            dest => dest.RecipientPhotoUrl,
-            opt => opt.MapFrom(src => src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
+                dest => dest.RecipientPhotoUrl,
+                opt => opt.MapFrom(src => src.Recipient.Photos.FirstOrDefault(x => x.IsMain).Url));
     }
 }

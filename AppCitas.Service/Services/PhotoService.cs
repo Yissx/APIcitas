@@ -8,7 +8,6 @@ namespace AppCitas.Service.Services;
 
 public class PhotoService : IPhotoService
 {
-    //private readonly IPhotoService _photoService;
     private readonly Cloudinary _cloudinary;
 
     public PhotoService(IOptions<CloudinarySettings> config)
@@ -25,6 +24,7 @@ public class PhotoService : IPhotoService
     public async Task<ImageUploadResult> AddPhotoAsync(IFormFile photoFile)
     {
         var uploadResult = new ImageUploadResult();
+
         if (photoFile.Length > 0)
         {
             using var stream = photoFile.OpenReadStream();

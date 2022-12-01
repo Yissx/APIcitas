@@ -1,6 +1,4 @@
-﻿using AppCitas.Service.Extensions;
-
-namespace AppCitas.Service.Entities;
+﻿namespace AppCitas.Service.Entities;
 
 public class AppUser
 {
@@ -10,7 +8,7 @@ public class AppUser
     public byte[] PasswordSalt { get; set; }  
     public DateTime DateOfBirth { get; set; }
     public string KnownAs { get; set; }
-    public DateTime CreatedAt { get; set; } = DateTime.Now;
+    public DateTime Created { get; set; } = DateTime.Now;
     public DateTime LastActive { get; set; } = DateTime.Now;
     public string Gender { get; set; }
     public string Introduction { get; set; }
@@ -18,16 +16,13 @@ public class AppUser
     public string Interests { get; set; }
     public string City { get; set; }
     public string Country { get; set; }
-    public ICollection<Photo> Photos { get; set; }
 
+    public ICollection<Photo> Photos { get; set; }
+    
     public ICollection<UserLike>LikedUsers { get; set; }
     public ICollection<UserLike>LikedByUsers { get; set; }
 
-    public ICollection<Messages> MessageSent { set; get; }
+    public ICollection<Messages> MessagesSent { set; get; }
     public ICollection<Messages> MessagesReceived { set; get; }
 
-    /*public int GetAge()
-    {
-        return DateOfBirth.CalculateAge();
-    }*/
 }

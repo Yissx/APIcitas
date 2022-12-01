@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations.Schema;
+
 namespace AppCitas.Service.Entities;
 
 [Table("Photos")]

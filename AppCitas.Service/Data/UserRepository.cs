@@ -41,7 +41,7 @@ public class UserRepository : IUserRepository
 
         query = userParams.OrderBy switch
         {
-            "created" => query.OrderByDescending(u => u.CreatedAt),
+            "created" => query.OrderByDescending(u => u.Created),
             _ => query.OrderByDescending(u => u.LastActive)
         };
 

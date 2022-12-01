@@ -17,6 +17,7 @@ public class LikesRepository : ILikesRepository
         _context = context;
         _mapper = mapper;
     }
+
     public async Task<UserLike> GetUserLike(int sourceUserId, int likedUserId)
     {
         return await _context.Likes.FindAsync(sourceUserId, likedUserId);
@@ -32,19 +33,23 @@ public class LikesRepository : ILikesRepository
             likes = likes.Where(like => like.SourceUserId == likesParams.UserId);
             users = likes.Select(like => like.LikedUser);
         }
+
         if (likesParams.Predicate.ToLower().Equals("likedby"))
         {
             likes = likes.Where(like => like.LikedUserId == likesParams.UserId);
             users = likes.Select(like => like.SourceUser);
         }
+
         var likedUsers = users.Select(user => new LikeDto
         {
             Username = user.UserName,
             KnownAs = user.KnownAs,
             Age = user.DateOfBirth.CalculateAge(),
             PhotoUrl = user.Photos.FirstOrDefault(p => p.IsMain).Url,
+            City = user.City,
             Id = user.Id
         });
+
         return await PagedList<LikeDto>
             .CreateAsync(likedUsers, likesParams.PageNumber, likesParams.PageSize);
     }

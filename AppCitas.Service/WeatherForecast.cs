@@ -1,4 +1,4 @@
-namespace AppCitas.Service.Controllers;
+namespace AppCitas.Service;
 
 public class WeatherForecast
 {

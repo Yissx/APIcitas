@@ -4,12 +4,13 @@ using Microsoft.AspNetCore.Mvc.Filters;
 
 namespace AppCitas.Service.Helpers;
 
-public class LogUserActivity
+public class LogUserActivity : IAsyncActionFilter
 {
-    public async Task OnActionExecutionAsync(ActionExecutedContext context, ActionExecutionDelegate next)
+    public async Task OnActionExecutionAsync(ActionExecutingContext context, ActionExecutionDelegate next)
     {
         var resultContext = await next();
-        if (resultContext.HttpContext.User.Identity.IsAuthenticated) return;
+        
+        if (!resultContext.HttpContext.User.Identity.IsAuthenticated) return;
 
         var userId = resultContext.HttpContext.User.GetUserId();
         var repo = resultContext.HttpContext.RequestServices.GetService<IUserRepository>();
